@@ -1,0 +1,59 @@
+*ci.txt*
+
+Author: mapan <mapan1024@gmail.com>
+
+==============================================================================
+Ci                                          *ci*
+
+1. Introduction                             |ci_intro|
+2. Ci Usage                                 |ci_usage|
+3. Ci Options                               |ci_options|
+4. Example                                  |ci_example|
+
+==============================================================================
+1. Introduction                             *ci_intro*
+
+Ci is a plugin which allows you to translate words in vim using the <F2> key.
+
+Ci requuires Vim version 7.0 or above.
+
+==============================================================================
+2. Ci Usage                                 *ci_usage*
+
+In inset or normal mode, turn the cursor over a word and press <F2> to complete
+the translation.
+
+==============================================================================
+3. Ci Options                               *ci_options*
+
+Ci is considered via a global variable that you can set in your |vimrc| file
+according to your needs.
+
+g:ci_show_web  (default value: 0)           *show_web*
+
+g:ci_show_generalization (default value:0)  *show_generalization*
+
+g:ci_show_explains  (default value:1)       *show_explains*
+
+4. Translation example                      *ci_example*
+
+>
+    Translation:
+        解释了
+    Explains:
+        v. 解释；说明（explain的三单形式）
+    Key:  Explains
+        value:  解释
+        value:  说明
+        value:  为
+    Key:  Operation explains
+        value:  操作说明
+    Key:  Cosmo Explains
+        value:  波斯菊说道
+<
+
+If we translate "explains", the `Translation` section is generalization; the
+`Explains` section is explains; the `Key` and `value` section is web explain.
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:

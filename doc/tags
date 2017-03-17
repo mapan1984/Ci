@@ -1,0 +1,9 @@
+ci	ci.txt	/*ci*
+ci.txt	ci.txt	/*ci.txt*
+ci_example	ci.txt	/*ci_example*
+ci_intro	ci.txt	/*ci_intro*
+ci_options	ci.txt	/*ci_options*
+ci_usage	ci.txt	/*ci_usage*
+show_explains	ci.txt	/*show_explains*
+show_generalization	ci.txt	/*show_generalization*
+show_web	ci.txt	/*show_web*
