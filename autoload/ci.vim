@@ -33,6 +33,8 @@ try:
 except:
     from urllib.parse import urlencode
 
+eprint = sys.stderr.write
+
 url = r'''http://fanyi.youdao.com/openapi.do'''
 
 data = {
@@ -50,9 +52,22 @@ def get_response(word):
     try:
         result = urlopen(full_url).read()
     except:
-        print("can't translation %s" % word)
-    result = json.loads(result, encoding='utf-8')
-    return result
+        eprint("ERROR: Can not make network connection")
+        return None
+    else:
+        try:
+            return json.loads(result, encoding='utf-8')
+        except:
+            eprint("ERROR: Can not translate %s" % word)
+            return None
+
+def is_valid_result(result):
+    error_code = result.get('errorCode')
+    if error_code == 0:
+        return True
+    else:
+        eprint("ERROR: can't translate %s" % result.get("query"))
+        return False
 
 def show_generalization(result):
     translation = result.get('translation')
@@ -80,18 +95,25 @@ def show_web(result):
                 print('\tvalue: ', v.encode('utf-8'))
 
 
-word = vim.eval('expand("<cword>")') 
+esc = r''',./<>?:;'"{}[]|\~`!@#$%^&*()-_=+'''
+
+word = vim.eval('expand("<cword>")').strip(esc)
+
+print(word)
 
 result = get_response(word)
 
-if int(vim.eval('g:ci_show_generalization')):
-    show_generalization(result)
+if result and is_valid_result(result):
+    if int(vim.eval('g:ci_show_generalization')):
+        show_generalization(result)
+    
+    if int(vim.eval('g:ci_show_explains')):
+        show_explains(result)
+    
+    if int(vim.eval('g:ci_show_web')):
+        show_web(result)
 
-if int(vim.eval('g:ci_show_explains')):
-    show_explains(result)
 
-if int(vim.eval('g:ci_show_web')):
-    show_web(result)
 EOF
 
 endfunction
