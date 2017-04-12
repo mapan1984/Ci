@@ -1,27 +1,7 @@
-if !has('python')
-    echo "Error: Required vim compiled with +python"
-    finish
-endif
-
-if !exists('g:ci_show_generalization')
-    let g:ci_show_generalization = 0
-endif
-
-if !exists('g:ci_show_explains')
-    let g:ci_show_explains = 1
-endif
-
-if !exists('g:ci_show_web')
-    let g:ci_show_web = 0
-endif
-
-function! ci#GetCi()
-
-python<<EOF
 from __future__ import print_function
 import sys
-import vim
 import json
+import argparse
 
 try:
     from urllib2 import urlopen
@@ -46,7 +26,7 @@ data = {
 }
 
 def get_response(word):
-    data['q'] = word 
+    data['q'] = word
     url_values = urlencode(data)
     full_url = url + '?' + url_values
     try:
@@ -94,26 +74,29 @@ def show_web(result):
             for v in item.get('value'):
                 print('\tvalue: ', v.encode('utf-8'))
 
+parser = argparse.ArgumentParser()
+parser.add_argument("word", type=str,
+                    help="the word that you want to translate")
+parser.add_argument("-g", "--summary", help="show summary translation",
+                    action="store_true")
+parser.add_argument("-b", "--base", help="show base explains",
+                    action="store_true")
+parser.add_argument("-w", "--web", help="show web translation",
+                    action="store_true")
+args = parser.parse_args()
 
 esc = r''',./<>?:;'"{}[]|\~`!@#$%^&*()-_=+'''
 
-word = vim.eval('expand("<cword>")').strip(esc)
+word = args.word.strip(esc)
+print('[', word, end=' ] ')
 
-print(word)
 
 result = get_response(word)
 
-if result and is_valid_result(result):
-    if int(vim.eval('g:ci_show_generalization')):
-        show_generalization(result)
-    
-    if int(vim.eval('g:ci_show_explains')):
-        show_explains(result)
-    
-    if int(vim.eval('g:ci_show_web')):
-        show_web(result)
-
-EOF
-
-endfunction
+if args.summary:
+    show_generalization(result)
+if args.base:
+    show_explains(result)
+if args.web:
+    show_web(result)
 
