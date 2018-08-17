@@ -1,4 +1,4 @@
-if !has('python')
+if !has('python') && !has('python3')
     echo "Error: Required vim compiled with +python"
     finish
 endif
@@ -24,14 +24,11 @@ import vim
 import json
 
 try:
-    from urllib2 import urlopen
-except:
     from urllib.request import urlopen
-
-try:
-    from urllib import urlencode
-except:
     from urllib.parse import urlencode
+except:
+    from urllib2 import urlopen
+    from urllib import urlencode
 
 eprint = sys.stderr.write
 
@@ -46,7 +43,7 @@ data = {
 }
 
 def get_response(word):
-    data['q'] = word 
+    data['q'] = word
     url_values = urlencode(data)
     full_url = url + '?' + url_values
     try:
@@ -56,7 +53,7 @@ def get_response(word):
         return None
     else:
         try:
-            return json.loads(result, encoding='utf-8')
+            return json.loads(result.decode('utf-8'))
         except:
             eprint("ERROR: Can not translate %s" % word)
             return None
@@ -106,10 +103,10 @@ result = get_response(word)
 if result and is_valid_result(result):
     if int(vim.eval('g:ci_show_generalization')):
         show_generalization(result)
-    
+
     if int(vim.eval('g:ci_show_explains')):
         show_explains(result)
-    
+
     if int(vim.eval('g:ci_show_web')):
         show_web(result)
 
