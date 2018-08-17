@@ -1,10 +1,10 @@
-if !has('python')
-    echo "Error: Required vim compiled with +python"
+if !has('python') && !has('python3')
+    echo 'Error: Required vim compiled with +python'
     finish
 endif
 
-if !exists('g:ci_show_generalization')
-    let g:ci_show_generalization = 0
+if !exists('g:ci_show_summary')
+    let g:ci_show_summary = 0
 endif
 
 if !exists('g:ci_show_explains')
@@ -16,11 +16,11 @@ if !exists('g:ci_show_web')
 endif
 
 function! BackgroundCommandCloseHandler(channel)
-  execute "cfile! " . g:backgroundCommandOutput
+  execute 'cfile! ' . s:backgroundCommandOutput
   copen
-  unlet g:backgroundCommandOutput
-  call win_gotoid(g:win_id)
-  call winrestview(g:winview)
+  unlet s:backgroundCommandOutput
+  call win_gotoid(s:win_id)
+  call winrestview(s:winview)
 endfunction
 
 function! RunBackgroundCommand(command)
@@ -29,21 +29,23 @@ function! RunBackgroundCommand(command)
     return
   endif
 
-  let g:win_id = win_getid()
-  let g:winview = winsaveview()
+  let s:win_id = win_getid()
+  let s:winview = winsaveview()
 
-  if exists('g:backgroundCommandOutput')
+  if exists('s:backgroundCommandOutput')
     echo 'Already running task in background'
   else
     echo 'Running task in background'
-    let g:backgroundCommandOutput = tempname()
+    let s:backgroundCommandOutput = tempname()
     call job_start(a:command, {'close_cb': 'BackgroundCommandCloseHandler',
                               \'out_io': 'file',
-                              \'out_name': g:backgroundCommandOutput})
+                              \'out_name': s:backgroundCommandOutput})
   endif
 endfunction
 
+let s:ci_home = fnamemodify(resolve(expand('<sfile>:p')), ':h')
+
 function! asynci#GetCi()
-    let s:word = expand('<cword>')
-    call RunBackgroundCommand(['python', '/home/eagle/.vim/bundle/Ci/bin/ci.py', '-b', s:word])
+    let l:word = expand('<cword>')
+    call RunBackgroundCommand(['python', s:ci_home . '/../bin/ci.py', '-e', l:word])
 endfunction

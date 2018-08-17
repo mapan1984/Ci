@@ -1,5 +1,6 @@
 if has('channel') && has('job')
     nnoremap <F2> :call asynci#GetCi()<cr>
+    nnoremap <leader>k :call asynci#GetCi()<cr>
     vnoremap <F2> :call asynci#GetCi()<cr>
     inoremap <F2> :call asynci#GetCi()<cr>
 else
