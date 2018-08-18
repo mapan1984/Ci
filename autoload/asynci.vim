@@ -15,6 +15,21 @@ if !exists('g:ci_show_web')
     let g:ci_show_web = 0
 endif
 
+
+let s:param = []
+if g:ci_show_summary == 1
+    call add(s:param, '-s')
+endif
+
+if g:ci_show_explains == 1
+    call add(s:param, '-e')
+endif
+
+if g:ci_show_web == 1
+    call add(s:param, '-w')
+endif
+
+
 function! BackgroundCommandCloseHandler(channel)
   execute 'cfile! ' . s:backgroundCommandOutput
   copen
@@ -47,5 +62,5 @@ let s:ci_home = fnamemodify(resolve(expand('<sfile>:p')), ':h')
 
 function! asynci#GetCi()
     let l:word = expand('<cword>')
-    call RunBackgroundCommand(['python', s:ci_home . '/../bin/ci.py', '-e', l:word])
+    call RunBackgroundCommand(['python', s:ci_home . '/../bin/ci.py', join(s:param, ' '), l:word])
 endfunction
